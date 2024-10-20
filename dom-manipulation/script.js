@@ -236,3 +236,57 @@ function syncQuotesWithLocal(serverQuotes) {
   quotes = mergedQuotes;
   filterQuotes();
 }
+// Function to show notifications
+function showNotification(message, type = 'info') {
+  const notification = document.getElementById('notification');
+  notification.style.display = 'block';
+  notification.style.backgroundColor = type === 'info' ? '#e0ffe0' : '#ffe0e0'; // Green for info, red for error
+  notification.textContent = message;
+
+  // Automatically hide notification after 5 seconds
+  setTimeout(() => {
+    notification.style.display = 'none';
+  }, 5000);
+}
+function syncQuotesWithLocal(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+  let conflictOccurred = false;
+
+  const mergedQuotes = serverQuotes.map(serverQuote => {
+    const localMatch = localQuotes.find(localQuote => localQuote.text === serverQuote.text);
+    
+    if (localMatch && localMatch.category !== serverQuote.category) {
+      conflictOccurred = true;
+    }
+    return serverQuote;
+  });
+
+  // Add any local quotes that don't exist on the server
+  localQuotes.forEach(localQuote => {
+    const existsOnServer = serverQuotes.some(
+      serverQuote => serverQuote.text === localQuote.text && serverQuote.category === localQuote.category
+    );
+    
+    if (!existsOnServer) {
+      mergedQuotes.push(localQuote);
+    }
+  });
+
+  // Notify the user if a conflict was resolved
+  if (conflictOccurred) {
+    showNotification('Conflicts detected! Server data was used.', 'error');
+  } else {
+    showNotification('Quotes synced with server!', 'info');
+  }
+
+  // Save and update UI
+  localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+  quotes = mergedQuotes;
+  filterQuotes();
+}
+if (conflictOccurred) {
+  showNotification('Conflicts detected! Server data was used.', 'error');
+} else {
+  showNotification('Quotes synced with server!', 'info');
+}
+
