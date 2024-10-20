@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Quote Display</title>
     <script src="script.js" defer></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="content">
@@ -20,6 +19,13 @@
             <button onclick="createAddQuoteForm()">Add Quote</button>
         </div>
         
+        <div>
+            <select id="categoryFilter" onchange="filterQuotes()">
+                <option value="all">All Categories</option>
+                <!-- Dynamically populated categories -->
+            </select>
+        </div>
+
         <div>
             <button onclick="exportQuotes()">Export Quotes</button>
             <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
