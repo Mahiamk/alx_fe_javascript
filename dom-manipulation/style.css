@@ -1,0 +1,30 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 50px;
+}
+#quoteDisplay {
+  margin: 20px auto;
+  border-radius: 20px, 20px, 20px, 20px;
+  padding: 80px;
+  box-shadow: 10px 10px 10px 10px rgba(45, 8, 131, 0.7);
+  font-size: 1.5rem;
+  border: 1px solid #67af6d;
+  width: 70%;
+  background-color: #a2b1a4;
+}
+input {
+  margin: 10px;
+  padding: 10px;
+}
+button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  background-color: rgb(118, 202, 118);
+}
+button:hover {
+  background-color: #00f815;
+}
+
