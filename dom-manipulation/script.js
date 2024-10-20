@@ -4,7 +4,9 @@ let quotes = [
   { text: "In the end, we will remember not the words of our enemies, but the silence of our friends.", category: "Wisdom" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" }
 ];
-
+function saveQuotes() {
+  localStorage.setItem('quotes', JSON.stringify(quotes));
+}
 // Function to display a random quote
 function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
