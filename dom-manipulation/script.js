@@ -112,3 +112,126 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Event listener for showing a new random quote
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+
+const SERVER_URL = 'https://jsonplaceholder.typicode.com/posts';
+// Fetch quotes from the mock server
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const serverQuotes = await response.json();
+    
+    // Process server quotes to match the format we use locally
+    const processedQuotes = serverQuotes.map(quote => ({
+      text: quote.title,
+      category: quote.body
+    }));
+    
+    // Sync server quotes with local storage
+    syncQuotesWithLocal(processedQuotes);
+    
+  } catch (error) {
+    console.error('Error fetching quotes from server:', error);
+  }
+}
+// Sync server data with local storage
+function syncQuotesWithLocal(serverQuotes) {
+  // Get local quotes from localStorage
+  const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+
+  // Merge server quotes with local quotes, giving precedence to the server
+  const mergedQuotes = [...serverQuotes];
+
+  // Add any local quotes that don't exist on the server
+  localQuotes.forEach(localQuote => {
+    const existsOnServer = serverQuotes.some(
+      serverQuote => serverQuote.text === localQuote.text && serverQuote.category === localQuote.category
+    );
+    
+    if (!existsOnServer) {
+      mergedQuotes.push(localQuote);
+    }
+  });
+
+  // Update localStorage with merged data
+  localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+
+  // Update the UI with merged quotes
+  quotes = mergedQuotes;
+  filterQuotes();
+}
+
+// Post a new quote to the server
+async function postNewQuoteToServer(newQuote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: newQuote.text,
+        body: newQuote.category
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    const result = await response.json();
+    console.log('Quote successfully posted to server:', result);
+  } catch (error) {
+    console.error('Error posting new quote to server:', error);
+  }
+}
+
+function createAddQuoteForm() {
+  const quoteText = document.getElementById('newQuoteText').value;
+  const quoteCategory = document.getElementById('newQuoteCategory').value;
+
+  if (quoteText && quoteCategory) {
+    const newQuote = { text: quoteText, category: quoteCategory };
+    
+    quotes.push(newQuote);
+    saveQuotes();  // Save locally
+    populateCategories();  // Update categories
+    filterQuotes();  // Reapply filters
+    
+    // Post the new quote to the server
+    postNewQuoteToServer(newQuote);
+    
+    alert('New quote added successfully!');
+  } else {
+    alert('Please enter both a quote and a category.');
+  }
+}
+
+function syncQuotesWithLocal(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+  let conflictOccurred = false;
+
+  const mergedQuotes = serverQuotes.map(serverQuote => {
+    const localMatch = localQuotes.find(localQuote => localQuote.text === serverQuote.text);
+    
+    if (localMatch && localMatch.category !== serverQuote.category) {
+      conflictOccurred = true;
+      // Optionally handle more complex conflict resolution here
+    }
+    return serverQuote;
+  });
+
+  // Add any local quotes that don't exist on the server
+  localQuotes.forEach(localQuote => {
+    const existsOnServer = serverQuotes.some(
+      serverQuote => serverQuote.text === localQuote.text && serverQuote.category === localQuote.category
+    );
+    
+    if (!existsOnServer) {
+      mergedQuotes.push(localQuote);
+    }
+  });
+
+  // Notify the user if a conflict was resolved
+  if (conflictOccurred) {
+    alert('Conflicts detected! Server data was used.');
+  }
+
+  // Save and update UI
+  localStorage.setItem('quotes', JSON.stringify(mergedQuotes));
+  quotes = mergedQuotes;
+  filterQuotes();
+}
