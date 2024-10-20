@@ -133,6 +133,7 @@ async function fetchQuotesFromServer() {
     console.error('Error fetching quotes from server:', error);
   }
 }
+setInterval(fetchQuotesFromServer, 30000);
 // Sync server data with local storage
 function syncQuotesWithLocal(serverQuotes) {
   // Get local quotes from localStorage
