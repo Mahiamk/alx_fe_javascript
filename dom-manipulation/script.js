@@ -40,5 +40,36 @@ function createAddQuoteForm() {
   }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
+  if (lastQuote) {
+    document.getElementById('quoteDisplay').innerHTML = `"${lastQuote.text}" - Category: ${lastQuote.category}`;
+  }
+});
+
 // Event listener for showing a new random quote
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+
+// Function to export quotes to a JSON file
+function exportQuotes() {
+  const dataStr = JSON.stringify(quotes);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'quotes.json';
+  a.click();
+}
+
+// Function to import quotes from a JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(event) {
+    const importedQuotes = JSON.parse(event.target.result);
+    quotes.push(...importedQuotes);
+    saveQuotes();
+    alert('Quotes imported successfully!');
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
