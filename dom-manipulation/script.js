@@ -21,6 +21,14 @@ function createAddQuoteForm() {
     // Add the new quote to the array
     quotes.push({ text: quoteText, category: quoteCategory });
 
+    // Create a new list item for the DOM
+    const quoteListItem = document.createElement('li');
+    quoteListItem.textContent = `"${quoteText}" - Category: ${quoteCategory}`;
+
+    // Append the new list item to the quote list
+    const quoteList = document.getElementById('quoteList');
+    quoteList.appendChild(quoteListItem);
+
     // Clear input fields
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
