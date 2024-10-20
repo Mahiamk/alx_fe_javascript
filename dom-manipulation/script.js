@@ -1,5 +1,5 @@
 // Array to store quotes with categories
-let quotes = [
+let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
   { text: "In the end, we will remember not the words of our enemies, but the silence of our friends.", category: "Wisdom" },
   { text: "Life is what happens when you're busy making other plans.", category: "Life" }
